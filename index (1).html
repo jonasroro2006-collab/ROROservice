@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1e3a8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="JR Services Pro : CV, lettres de motivation, documents, photo, vidéo, publicité et dépannage. Envoyez votre demande en ligne.">
+<title>JR Services Pro – Tous vos besoins professionnels</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style type="text/tailwindcss">
+  @layer components {
+    .field { @apply w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/30; }
+    .lbl { @apply mb-1.5 block text-sm font-medium text-slate-700; }
+    .btn { @apply inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60; }
+    .svc { @apply flex cursor-pointer flex-col items-center gap-1 rounded-xl border border-slate-300 bg-white p-3 text-center transition hover:border-blue-500; }
+  }
+  .logo-jr { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
+  .svc:has(input:checked) { border-color: #2563eb; background: #eff6ff; box-shadow: 0 0 0 1px #2563eb; }
+  .svc:has(input:focus-visible) { outline: 2px solid #2563eb; outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased">
+
+<header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
+  <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
+    <div class="flex items-center gap-3">
+      <div class="logo-jr flex h-10 w-10 items-center justify-center rounded-full text-lg font-extrabold text-white shadow" aria-hidden="true">JR</div>
+      <div>
+        <p class="text-base font-bold leading-tight text-slate-900">JR Services Pro</p>
+        <p class="text-xs text-slate-500">Conception et édition sur mesure</p>
+      </div>
+    </div>
+    <span class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-800 ring-1 ring-green-200">
+      <span class="h-2 w-2 rounded-full bg-green-500" aria-hidden="true"></span>Service en ligne
+    </span>
+  </div>
+</header>
+
+<main class="mx-auto max-w-3xl px-4 py-10">
+  <div class="mb-8 text-center">
+    <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Tous vos besoins professionnels au même endroit</h1>
+    <p class="mx-auto mt-3 max-w-xl text-slate-600">CV, lettres, documents, photo, vidéo, publicité, dépannage : choisissez votre service, décrivez votre besoin, puis validez votre paiement.</p>
+  </div>
+
+  <ol class="mb-8 grid grid-cols-3 gap-3 text-center text-xs font-medium text-slate-600 sm:text-sm">
+    <li class="rounded-xl bg-white p-3 ring-1 ring-slate-200"><span class="block text-lg font-bold text-blue-700">1</span>Demande</li>
+    <li class="rounded-xl bg-white p-3 ring-1 ring-slate-200"><span class="block text-lg font-bold text-blue-700">2</span>Paiement</li>
+    <li class="rounded-xl bg-white p-3 ring-1 ring-slate-200"><span class="block text-lg font-bold text-blue-700">3</span>Livraison</li>
+  </ol>
+
+  <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg md:p-8" aria-labelledby="t-demande">
+    <h2 id="t-demande" class="sr-only">Formulaire de demande</h2>
+    <form id="clientForm" novalidate>
+      <input type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden">
+
+      <fieldset class="mb-8">
+        <legend class="mb-4 w-full border-b border-slate-200 pb-2 text-base font-bold text-slate-900">Vos coordonnées</legend>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label class="lbl" for="nom">Nom et prénoms *</label>
+            <input class="field" type="text" id="nom" required autocomplete="name" placeholder="Ex : Kouassi Jean">
+          </div>
+          <div>
+            <label class="lbl" for="telephone">Téléphone / WhatsApp *</label>
+            <input class="field" type="tel" id="telephone" required autocomplete="tel" inputmode="tel" placeholder="Ex : 0700000000">
+          </div>
+          <div class="md:col-span-2">
+            <label class="lbl" for="email">Adresse e-mail *</label>
+            <input class="field" type="email" id="email" required autocomplete="email" placeholder="votre.email@exemple.com">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="mb-6">
+        <legend class="mb-4 w-full border-b border-slate-200 pb-2 text-base font-bold text-slate-900">Votre besoin</legend>
+        <div id="services" class="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4"></div>
+        <div id="serviceFields" class="space-y-4"></div>
+        <div id="commonBlock" class="mt-4 space-y-4">
+          <div>
+            <label class="lbl" for="delai">Délai souhaité</label>
+            <select class="field" id="delai">
+              <option>Le plus vite possible</option>
+              <option>Sous 3 jours</option>
+              <option>Pas pressé</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl" for="notes">Décrivez votre besoin *</label>
+            <textarea class="field" id="notes" rows="4" placeholder="Précisez vos attentes, les corrections souhaitées, le style, les informations utiles…"></textarea>
+          </div>
+        </div>
+        <p class="mt-4 text-xs text-slate-500">Photos, vidéos ou documents à traiter : vous pourrez nous les envoyer par WhatsApp après avoir validé votre demande.</p>
+      </fieldset>
+
+      <button type="submit" id="btnSubmit" class="btn bg-blue-600 hover:bg-blue-700 focus-visible:ring-blue-600">Envoyer ma demande</button>
+      <p id="formStatus" role="status" aria-live="polite" class="mt-3 hidden rounded-lg px-4 py-3 text-sm"></p>
+    </form>
+  </section>
+
+  <section class="mt-8 rounded-2xl border border-green-200 bg-green-50 p-6 md:p-8" aria-labelledby="t-contact">
+    <h2 id="t-contact" class="text-lg font-bold text-slate-900">Une question ? Des fichiers à nous envoyer ?</h2>
+    <p class="mt-1 text-sm text-slate-700">Contactez-nous sur WhatsApp au <strong class="whitespace-nowrap">+225 05 96 53 45 76</strong> pour échanger sur votre projet ou envoyer vos photos, vidéos et documents.</p>
+    <a href="https://wa.me/2250596534576?text=Bonjour%20JR%20Services" target="_blank" rel="noopener noreferrer" class="btn mt-4 bg-green-600 hover:bg-green-700 focus-visible:ring-green-600 sm:w-auto">Discuter sur WhatsApp</a>
+  </section>
+
+  <section id="paiement" class="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow md:p-8" aria-labelledby="t-paiement">
+    <h2 id="t-paiement" class="text-lg font-bold text-slate-900">Paiement et confirmation</h2>
+    <p class="mt-1 text-sm text-slate-600">Réglez le montant convenu via Wave Marchand ou par transfert direct au <strong class="whitespace-nowrap">+225 05 02 26 23 79</strong> (JONAS RORO), puis confirmez ci-dessous.</p>
+
+    <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+      <a href="https://pay.wave.com/m/M_ci_XDuIn_ZLKME0/c/ci/" target="_blank" rel="noopener noreferrer" class="btn bg-sky-500 hover:bg-sky-600 focus-visible:ring-sky-500">Payer avec Wave Marchand</a>
+      <button type="button" id="btnCopy" onclick="copierNumero()" class="btn border border-slate-300 bg-white !text-slate-800 shadow-none hover:bg-slate-50 focus-visible:ring-slate-400">Copier le numéro de transfert</button>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div>
+        <label class="lbl" for="confirmPhone">Numéro utilisé pour la demande *</label>
+        <input class="field" type="tel" id="confirmPhone" inputmode="tel" autocomplete="tel" placeholder="Ex : 0700000000">
+      </div>
+      <div>
+        <label class="lbl" for="confirmTransId">Référence du SMS de paiement *</label>
+        <input class="field" type="text" id="confirmTransId" placeholder="ID de la transaction">
+      </div>
+    </div>
+    <button type="button" id="btnPay" onclick="confirmerPaiement()" class="btn mt-4 bg-green-600 hover:bg-green-700 focus-visible:ring-green-600">Valider mon paiement</button>
+    <p id="payStatus" role="status" aria-live="polite" class="mt-3 hidden rounded-lg px-4 py-3 text-sm"></p>
+  </section>
+</main>
+
+<footer class="border-t border-slate-200 bg-white">
+  <div class="mx-auto flex max-w-4xl flex-col items-center justify-between gap-2 px-4 py-6 text-sm text-slate-500 sm:flex-row">
+    <p>© <span id="year"></span> JR Services Pro. Tous droits réservés.</p>
+    <a class="font-medium text-blue-700 hover:underline" href="https://wa.me/2250596534576" target="_blank" rel="noopener noreferrer">WhatsApp : +225 05 96 53 45 76</a>
+  </div>
+</footer>
+
+<script>
+  const SUPABASE_URL = 'https://ajnmblsgaphjclggilcf.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_hH7_EiXcL7z83mw88cWmtA_HzYmK-Tt'; // clé publique
+  const NUM_TRANSFERT = '+225 05 02 26 23 79';
+  const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+  // Champs : [libellé, type, exemple ou options, obligatoire]
+  const SERVICES = [
+    { id: 'CV', icon: '📄', label: 'CV', fields: [
+      ['Poste ou domaine visé', 'text', 'Ex : Comptable, Développeur…', 1],
+      ['Situation', 'select', ['Création d\'un nouveau CV', 'Modification d\'un CV existant'], 1]] },
+    { id: 'Lettre', icon: '✉️', label: 'Lettre de motivation', fields: [
+      ['Poste ou organisme visé', 'text', 'Ex : Assistante RH, stage…', 1],
+      ['Objet', 'select', ['Emploi', 'Stage', 'Bourse ou formation', 'Autre'], 1]] },
+    { id: 'Documents', icon: '🗂️', label: 'Modification de documents', fields: [
+      ['Type de document', 'select', ['Word', 'Excel', 'PowerPoint', 'PDF', 'Autre'], 1]] },
+    { id: 'Photo', icon: '🖼️', label: 'Retouche et montage photo', fields: [
+      ['Type de travail', 'select', ['Retouche photo', 'Montage photo', 'Détourage / arrière-plan', 'Restauration de photo'], 1],
+      ['Nombre de photos', 'number', 'Ex : 3', 1]] },
+    { id: 'Video', icon: '🎬', label: 'Montage vidéo', fields: [
+      ['Type de montage', 'select', ['Vidéo pour réseaux sociaux', 'Vidéo publicitaire', 'Événement (mariage, anniversaire…)', 'Autre'], 1],
+      ['Durée approximative', 'text', 'Ex : 2 minutes', 0]] },
+    { id: 'Publicite', icon: '📢', label: 'Publicité et visuels', fields: [
+      ['Support', 'select', ['Affiche / flyer', 'Visuel réseaux sociaux', 'Bannière', 'Vidéo publicitaire', 'Autre'], 1],
+      ['Entreprise ou produit', 'text', 'Ex : Boutique Awa', 1]] },
+    { id: 'Depannage', icon: '🛠️', label: 'Dépannage téléphone / PC', fields: [
+      ['Appareil', 'select', ['Téléphone', 'Ordinateur'], 1],
+      ['Marque et modèle', 'text', 'Ex : Samsung A14, HP 250 G8', 0]] },
+    { id: 'Unites', icon: '📶', label: 'Transfert d\'unités / pass', common: false, fields: [
+      ['Numéro du bénéficiaire', 'tel', 'Ex : 0701020304', 1],
+      ['Opérateur', 'select', ['MTN', 'Orange', 'Moov', 'Wave'], 1],
+      ['Type de recharge', 'select', ['Crédit appel', 'Pass internet', 'Pass mixte'], 1]] }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  $('year').textContent = new Date().getFullYear();
+  const cleanPhone = (v) => v.trim().replace(/[\s.\-()]/g, '').replace(/^(\+|00)225/, '');
+  const validPhone = (v) => /^\d{10}$/.test(v);
+  const cur = () => SERVICES.find((s) => s.id === document.querySelector('input[name="service"]:checked').value);
+
+  function show(el, msg, ok) {
+    el.textContent = msg;
+    el.className = 'mt-3 rounded-lg px-4 py-3 text-sm ' +
+      (ok ? 'bg-green-50 text-green-800 ring-1 ring-green-200' : 'bg-red-50 text-red-800 ring-1 ring-red-200');
+  }
+
+  $('services').innerHTML = SERVICES.map((s, i) =>
+    `<label class="svc"><input class="sr-only" type="radio" name="service" value="${s.id}" ${i ? '' : 'checked'}>` +
+    `<span class="text-2xl" aria-hidden="true">${s.icon}</span><span class="text-xs font-semibold sm:text-sm">${s.label}</span></label>`).join('');
+
+  function renderFields() {
+    const s = cur();
+    $('serviceFields').innerHTML = s.fields.map((f, i) => {
+      const id = 'f' + i, req = f[3] ? 'required' : '';
+      const input = f[1] === 'select'
+        ? `<select class="field" id="${id}" ${req}>${f[2].map((o) => `<option>${o}</option>`).join('')}</select>`
+        : `<input class="field" type="${f[1]}" id="${id}" ${req} placeholder="${f[2]}" ${f[1] === 'number' ? 'min="1"' : ''} ${f[1] === 'tel' ? 'inputmode="tel"' : ''}>`;
+      return `<div><label class="lbl" for="${id}">${f[0]}${f[3] ? ' *' : ''}</label>${input}</div>`;
+    }).join('');
+    const common = s.common !== false;
+    $('commonBlock').classList.toggle('hidden', !common);
+    $('notes').required = common;
+    $('formStatus').classList.add('hidden');
+  }
+  $('services').addEventListener('change', renderFields);
+  renderFields();
+
+  $('clientForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if ($('website').value) return; // anti-spam
+    const form = e.target, status = $('formStatus');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    const tel = cleanPhone($('telephone').value);
+    if (!validPhone(tel)) { show(status, 'Le numéro de téléphone doit comporter 10 chiffres.', false); $('telephone').focus(); return; }
+
+    const s = cur(), parts = [];
+    for (let i = 0; i < s.fields.length; i++) {
+      const f = s.fields[i];
+      let v = $('f' + i).value.trim();
+      if (f[1] === 'tel') {
+        v = cleanPhone(v);
+        if (!validPhone(v)) { show(status, f[0] + ' : 10 chiffres attendus.', false); $('f' + i).focus(); return; }
+      }
+      if (v) parts.push(f[0] + ': ' + v);
+    }
+    if (s.common !== false) { parts.push('Délai: ' + $('delai').value, 'Besoin: ' + $('notes').value.trim()); }
+    if (!db) { show(status, "Connexion impossible pour le moment. Rechargez la page ou contactez-nous sur WhatsApp.", false); return; }
+
+    const btn = $('btnSubmit');
+    btn.disabled = true; btn.textContent = 'Envoi en cours…';
+    try {
+      const { error } = await db.from('Demandes').insert([{
+        nom_client: $('nom').value.trim(), telephone: tel, email: $('email').value.trim(),
+        type_service: s.id, details: parts.join(' | '), statut: 'En attente'
+      }]);
+      if (error) throw error;
+      $('confirmPhone').value = tel;
+      form.reset(); renderFields();
+      show(status, 'Demande enregistrée. Prochaine étape : effectuez le paiement ci-dessous, puis validez-le avec le même numéro de téléphone.', true);
+      $('paiement').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (err) {
+      console.error(err);
+      show(status, "L'envoi a échoué. Vérifiez votre connexion et réessayez.", false);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Envoyer ma demande';
+    }
+  });
+
+  async function confirmerPaiement() {
+    const status = $('payStatus');
+    const tel = cleanPhone($('confirmPhone').value);
+    const transId = $('confirmTransId').value.trim();
+    if (!validPhone(tel) || transId.length < 4) {
+      show(status, 'Saisissez le numéro utilisé pour la demande (10 chiffres) et la référence du paiement.', false);
+      return;
+    }
+    if (!db) { show(status, "Connexion impossible pour le moment. Rechargez la page ou contactez-nous sur WhatsApp.", false); return; }
+
+    const btn = $('btnPay');
+    btn.disabled = true; btn.textContent = 'Validation en cours…';
+    try {
+      const { error } = await db.from('Demandes').insert([{
+        nom_client: 'Confirmation de paiement', telephone: tel, email: '',
+        type_service: 'Paiement', details: 'Référence: ' + transId,
+        transaction_id: transId, statut: 'Paiement à vérifier'
+      }]);
+      if (error) throw error;
+      show(status, 'Paiement signalé. JR Services vérifie la transaction puis traite votre dossier.', true);
+      $('confirmTransId').value = '';
+    } catch (err) {
+      console.error(err);
+      show(status, 'La validation a échoué. Réessayez dans un instant.', false);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Valider mon paiement';
+    }
+  }
+
+  async function copierNumero() {
+    const btn = $('btnCopy');
+    try { await navigator.clipboard.writeText(NUM_TRANSFERT.replace(/\s/g, '')); btn.textContent = 'Numéro copié ✓'; }
+    catch { btn.textContent = NUM_TRANSFERT; }
+    setTimeout(() => (btn.textContent = 'Copier le numéro de transfert'), 2500);
+  }
+</script>
+</body>
+</html>
